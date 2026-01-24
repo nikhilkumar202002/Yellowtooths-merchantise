@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+@theme {
+  /* Brand colors available for calling */
+  --color-dark: #1E1E1E;
+  --color-yellow: #FEC52D;
+  --color-white: #FFFFFF;
+  
+  /* Font configuration */
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    /* Full white background by default */
+    background-color: #FFFFFF; 
+    color: #1E1E1E; /* Dark text for readability on white */
+    font-family: var(--font-manrope), sans-serif;
+  }
+}
