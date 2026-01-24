@@ -14,7 +14,26 @@
   body {
     /* Full white background by default */
     background-color: #FFFFFF; 
-    color: #1E1E1E; /* Dark text for readability on white */
+    color: #1E1E1E; 
     font-family: var(--font-manrope), sans-serif;
+  }
+
+  .content-container {
+    padding-left: 17px;
+    padding-right: 17px;
+  }
+
+  @media (min-width: 768px) {
+    .content-container {
+      padding-left: 55px;
+      padding-right: 55px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .content-container {
+      padding-left: 96px;
+      padding-right: 96px;
+    }
   }
 }
