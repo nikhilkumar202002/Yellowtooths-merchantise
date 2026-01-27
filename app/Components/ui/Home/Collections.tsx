@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { fetchCollections } from '@/app/services/api';
 import Image from 'next/image';
+import useEmblaCarousel from 'embla-carousel-react';
+import TextAnimation from '../../Common/TextAnimation';
 
 type SubCategory = {
   id: number;
@@ -19,6 +21,15 @@ type Category = {
 const Collections = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const [imageError, setImageError] = useState<{ [key: number]: boolean }>({});
+
+  const [emblaRef] = useEmblaCarousel({ 
+    align: 'start', 
+    containScroll: 'trimSnaps',
+    breakpoints: {
+      '(min-width: 768px)': { active: false } 
+    }
+  });
 
   useEffect(() => {
     const getCollections = async () => {
@@ -36,55 +47,75 @@ const Collections = () => {
 
   if (loading) {
     return (
-      <div className="content-container grid grid-cols-1 md:grid-cols-3 gap-6 py-10">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="w-full h-[480px] bg-gray-100 animate-pulse rounded-lg" />
-        ))}
+      <div className="content-container py-10">
+        <div className="h-10 w-64 bg-gray-100 animate-pulse mb-8 rounded mx-auto" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="w-full h-[520px] bg-gray-100 animate-pulse rounded" />
+          ))}
+        </div>
       </div>
     );
   }
 
   return (
-    <section className="collection-section">
+    <section className="collection-section py-10">
       <div className="content-container">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {categories.map((category) => (
-            <div 
-              key={category.id} 
-              className="relative w-full h-[520px] group overflow-hidden bg-gray-200"
-            >
-              {/* Category Image */}
-              {category.image_url ? (
-                <Image
-                  src={category.image_url}
-                  alt={category.name}
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-dark text-white font-bold">
-                  {category.name}
-                </div>
-              )}
-
-              {/* Overlay with Content */}
-              <div className="absolute inset-0 bg-black/30 flex flex-col justify-end p-8 text-white transition-opacity group-hover:bg-black/50">
-                <h3 className="text-3xl font-bold uppercase" style={{ fontFamily: 'Moralana, serif' }}>
-                  {category.name}
-                </h3>
-                
-                {/* Displaying a few subcategories if they exist */}
-                <div className="mt-4 flex flex-wrap gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  {category.subcategories.slice(0, 3).map((sub) => (
-                    <span key={sub.id} className="text-sm bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm">
-                      {sub.name}
+      <div className="flex justify-center mb-12">
+          <TextAnimation 
+            text="Our Collection"
+            className="text-4xl md:text-5xl font-sans font-medium text-dark tracking-tight text-center"
+            delay={0.2}
+          />
+        </div>
+        <div className="overflow-hidden md:overflow-visible" ref={emblaRef}>
+          <div className="flex md:grid md:grid-cols-3 md:gap-5 gap-3">
+            {categories.map((category) => (
+              <div 
+                key={category.id} 
+                className="relative min-w-[85%] md:min-w-0 flex-shrink-0 h-[420px] md:h-[520px] group overflow-hidden bg-gray-200"
+              >
+                {category.image_url && !imageError[category.id] ? (
+                  <Image
+                    src={category.image_url}
+                    alt={category.name}
+                    fill
+                    priority
+                    className="object-cover transition-transform duration-700 group-hover:scale-110"
+                    onError={() => setImageError(prev => ({ ...prev, [category.id]: true }))}
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-[#1E1E1E] text-white p-4">
+                    <span className="text-[25px] opacity-50 font-serif">
+                      {category.name}
                     </span>
-                  ))}
+                  </div>
+                )}
+
+                {/* Overlay Container */}
+                <div className="absolute inset-0 bg-black/20 flex flex-col justify-end p-8 text-white transition-all duration-500 group-hover:bg-black/50">
+                  
+                  {/* Content Wrapper that moves up on hover */}
+                  <div className="transform transition-transform duration-500 translate-y-[40px] group-hover:translate-y-0">
+                    <h3 
+                      className="text-[25px] leading-none mb-4" 
+                      style={{ fontFamily: 'Moralana, serif' }}
+                    >
+                      {category.name}
+                    </h3>
+                    
+                    {/* Explore Button that fades in and moves up */}
+                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+                      <button className="text-sm font-medium border-b border-white pb-1 tracking-widest uppercase font-sans">
+                        EXPLORE NOW
+                      </button>
+                    </div>
+                  </div>
+
                 </div>
-                
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </section>
