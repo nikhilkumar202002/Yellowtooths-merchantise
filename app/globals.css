@@ -1,13 +1,26 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'Moralana';
+  src: url('/Fonts/Moralana-DEMO.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
-  /* Brand colors available for calling */
+ 
   --color-dark: #1E1E1E;
   --color-yellow: #FEC52D;
   --color-white: #FFFFFF;
-  
-  /* Font configuration */
   --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-moralana: 'Moralana', serif;
+
+  @keyframes blink-yellow {
+    0%, 100% { color: var(--color-white); }
+    50% { color: var(--color-yellow); }
+  }
+  --animation-blink: blink-yellow 1.5s ease-in-out infinite;
 }
 
 @layer base {
@@ -36,4 +49,37 @@
       padding-right: 96px;
     }
   }
+}
+
+/* Banner Styles */
+.banner-cta{
+  width: fit-content;
+  padding: 12px 32px;
+  background-color: var(--color-yellow);
+  color: var(--color-dark);
+  font-weight: 500;
+  font-size: 17px;
+  border-radius: 35px !important;
+  margin-top: 30px;
+  font-family: var(--font-manrope), sans-serif;
+}
+.banner-cta a{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.banner-cta-icon{
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  font-weight: 600;
+}
+.banner-highlight{
+  font-family: var(--font-moralana), serif;
+}
+
+/* Collectiosn */
+
+.collection-section{
+  padding: 100px 0px;
 }
