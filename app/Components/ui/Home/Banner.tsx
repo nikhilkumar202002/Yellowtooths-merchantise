@@ -1,11 +1,20 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { fetchBanners } from '@/app/services/api'; 
 import Image from 'next/image';
 import { GoArrowUpRight } from "react-icons/go";
 import TextAnimation from '../../Common/TextAnimation';
 import { motion, AnimatePresence } from 'framer-motion';
+
+// Constants
+const SLIDE_DURATION = 5; // seconds
+const INDICATOR_MIN_WIDTH = 35; // px
+const INDICATOR_MAX_WIDTH = 70; // px
+const OVERLAY_OPACITY = 0.2;
+const ANIMATION_DURATION = 1; // seconds
+const DESCRIPTION_DELAY = 0.4; // seconds
+const BANNER_TYPE = 'Web App';
 
 type BannerType = {
   id: number;
@@ -20,7 +29,11 @@ const Banner = () => {
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const SLIDE_DURATION = 5; // seconds
+  // Memoize current banner before any conditional returns
+  const currentBanner = useMemo(
+    () => banners[currentIndex],
+    [banners, currentIndex]
+  );
 
   const nextSlide = useCallback(() => {
     if (banners.length > 0) {
@@ -32,16 +45,17 @@ const Banner = () => {
     const getBanners = async () => {
       try {
         const response = await fetchBanners();
-        const data = response?.data || response; 
+        const data = Array.isArray(response) ? response : response?.data || [];
         
         if (Array.isArray(data)) {
           const webBanners = data.filter(
-            (item: BannerType) => item.banner_type_name === 'Web App'
+            (item: BannerType) => item.banner_type_name === BANNER_TYPE
           );
           setBanners(webBanners);
         }
       } catch (error) {
-        console.error("Error setting banners:", error);
+        console.error("Error fetching banners:", error);
+        setBanners([]);
       } finally {
         setLoading(false);
       }
@@ -50,12 +64,14 @@ const Banner = () => {
   }, []);
 
   if (loading) {
-    return <div className="w-full h-[60vh] md:h-[90vh] bg-gray-100 animate-pulse flex items-center justify-center text-dark font-sans">Loading...</div>;
+    return (
+      <div className="w-full h-[60vh] md:h-[90vh] bg-gray-100 animate-pulse flex items-center justify-center text-dark font-sans">
+        Loading...
+      </div>
+    );
   }
 
-  if (banners.length === 0) return null;
-
-  const currentBanner = banners[currentIndex];
+  if (!currentBanner) return null;
 
   return (
     <section className="w-full relative overflow-hidden h-[80vh] md:h-[90vh] bg-black">
@@ -66,7 +82,7 @@ const Banner = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 1, ease: "linear" }} // 2. Simple linear fade for a cleaner look
+          transition={{ duration: ANIMATION_DURATION, ease: "linear" }}
           className="absolute inset-0 w-full h-full"
         >
           {/* Background Image */}
@@ -79,11 +95,10 @@ const Banner = () => {
             sizes="100vw"
           />
           
-          <div className="absolute inset-0 bg-black/20 flex flex-col justify-end pb-16">
+          <div className={`absolute inset-0 bg-black/${(OVERLAY_OPACITY * 100).toFixed(0)} flex flex-col justify-end pb-16`}>
             <div className="content-container text-white">
               <div className="max-w-4xl">
                 <TextAnimation 
-                  key={`title-${currentBanner.id}`}
                   text={currentBanner.title}
                   className="text-5xl md:text-7xl banner-highlight"
                   style={{ fontFamily: 'Moralana, serif' }}
@@ -93,9 +108,8 @@ const Banner = () => {
                   <motion.p 
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    transition={{ delay: 0.4, duration: 0.6 }}
+                    transition={{ delay: DESCRIPTION_DELAY, duration: 0.6 }}
                     className="text-5xl md:text-7xl"
-
                   >
                     {currentBanner.description}
                   </motion.p>
@@ -103,28 +117,31 @@ const Banner = () => {
 
                 <div className="banner-cta mt-8">
                   <a 
-                    href="#" 
+                    href="#collections" 
                     className="inline-flex items-center gap-2 hover:text-yellow transition-all text-xl font-sans font-medium"
+                    aria-label="Explore Frames collection"
                   >
-                    Explore Frames <GoArrowUpRight className="text-2xl" />
+                    Explore Frames <GoArrowUpRight className="text-2xl" aria-hidden="true" />
                   </a>
                 </div>
 
                 {/* Slider Indicators */}
-                <div className="flex items-center gap-2 mt-[40px]">
+                <div className="flex items-center gap-2 mt-[40px]" role="tablist" aria-label="Banner slides">
                   {banners.map((_, index) => (
                     <button
                       key={index}
                       onClick={() => setCurrentIndex(index)}
+                      role="tab"
+                      aria-selected={currentIndex === index}
+                      aria-label={`Go to slide ${index + 1}`}
                       className="relative cursor-pointer py-2"
                     >
                       <div 
                         className="h-[3px] bg-[#808080] rounded-full overflow-hidden transition-all duration-300"
-                        style={{ width: currentIndex === index ? '70px' : '35px' }}
+                        style={{ width: currentIndex === index ? `${INDICATOR_MAX_WIDTH}px` : `${INDICATOR_MIN_WIDTH}px` }}
                       >
                         {currentIndex === index && (
                           <motion.div
-                            key={`progress-${currentIndex}`}
                             initial={{ width: 0 }}
                             animate={{ width: "100%" }}
                             transition={{ 

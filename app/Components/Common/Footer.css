@@ -1,0 +1,31 @@
+/* Infinite Slider Animation */
+@keyframes infiniteScroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-33.333%);
+  }
+}
+
+.animate-infinite-scroll {
+  animation: infiniteScroll 20s linear infinite;
+}
+
+.footer-top-points-mobile .slider-container:hover {
+  animation-play-state: paused;
+}
+
+/* Smooth scrolling effect */
+.slider-container {
+  display: flex;
+  gap: 1rem;
+}
+
+.footer-top-point {
+  display: inline-block;
+}
+
+.footer-separator {
+  display: inline-block;
+}
