@@ -416,6 +416,29 @@
   font-size: 16px;
   color: #666;
 }
+.crafted-cinema-heading h2{
+  font-size: 65px;
+  font-family: var(--font-moralana);
+  line-height: 70px;
+  .crafted-cinema-highlight{
+    font-family: var(--font-manrope);
+  }
+}
+
+.crafted-cinema{
+  padding: 100px 0px;
+}
+.crafted-cinema-para{
+  display: flex;
+  justify-content: right;
+}
+.crafted-cinema-para p{
+  font-size: 22px;
+  font-family: var(--font-manrope);
+  font-weight: 400;
+  color: #4a4a4a;
+  width: 75%;
+}
 
 @media (max-width: 768px) {
   .seasonal-section {
@@ -461,4 +484,24 @@
 
 @media (max-width: 768px) {
   .carousel-btn { width: 34px; height: 34px; font-size: 16px; }
+}
+
+/* Crafted with Cinema Section */
+
+.main-btn a{
+  padding: 12px 32px;
+  background-color: var(--color-yellow) !important;
+  font-family: var(--font-manrope);
+  color: var(--color-dark);
+  font-weight: 500;
+  font-size: 17px;
+  border-radius: 30px;
+  border: 1px solid var(--color-yellow) !important;
+
+}
+.crafted-cinema-left-btn a{
+  padding: 12px 32px;
+  background-color: transparent;
+  border-radius: 30px !important;
+  border: 1px solid var(--color-dark) !important;
 }

@@ -4,6 +4,7 @@ import Banner from "./Components/ui/Home/Banner";
  import Collections from "./Components/ui/Home/Collections";
  import LatestProducts from "./Components/ui/Home/LatestProducts";
  import Seasonal from "./Components/ui/Home/Seasonal";
+ import Crafted from "./Components/ui/Home/Crafted";
 
 const page = () => {
   return (
@@ -11,7 +12,9 @@ const page = () => {
       <Banner />
       <Collections />
       <LatestProducts />
-      <Seasonal />
+      <Seasonal />  
+      <Crafted />
+
     </div>
   )
 }

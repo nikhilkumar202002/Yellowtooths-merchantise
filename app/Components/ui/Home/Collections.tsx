@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import { fetchCollections } from '@/app/services/api';
 import Image from 'next/image';
 import useEmblaCarousel from 'embla-carousel-react';
-import TextAnimation from '../../Common/TextAnimation';
+import { MdOutlineArrowOutward } from "react-icons/md";
+
 
 type SubCategory = {
   id: number;
@@ -61,14 +62,15 @@ const Collections = () => {
   return (
     <section className="collection-section py-10">
       <div className="content-container">
-      <div className="flex justify-center mb-12">
-          <TextAnimation 
-            text="Our Collection"
-            className="text-4xl md:text-5xl font-sans font-medium text-dark tracking-tight text-center"
-            delay={0.2}
-          />
-        </div>
-        <div className="overflow-hidden md:overflow-visible" ref={emblaRef}>
+     <div className="latest-product-header flex justify-between items-end">
+                 <div className="latest-product-mainheader">
+                   <h2>Our Collections</h2>
+                 </div>
+                 <div className="latest-product-button hidden md:block">
+                   <a href="" className='flex gap-2'>View All <span className='latest-product-button-icon'><MdOutlineArrowOutward /></span></a>
+                 </div>
+               </div>
+        <div className="overflow-hidden md:overflow-visible pt-8" ref={emblaRef}>
           <div className="flex md:grid md:grid-cols-3 md:gap-5 gap-3">
             {categories.map((category) => (
               <div 
