@@ -8,12 +8,12 @@ import TextAnimation from '../../Common/TextAnimation';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Constants
-const SLIDE_DURATION = 5; // seconds
-const INDICATOR_MIN_WIDTH = 35; // px
-const INDICATOR_MAX_WIDTH = 70; // px
+const SLIDE_DURATION = 5; 
+const INDICATOR_MIN_WIDTH = 35; 
+const INDICATOR_MAX_WIDTH = 70; 
 const OVERLAY_OPACITY = 0.2;
-const ANIMATION_DURATION = 1; // seconds
-const DESCRIPTION_DELAY = 0.4; // seconds
+const ANIMATION_DURATION = 1; 
+const DESCRIPTION_DELAY = 0.4; 
 const BANNER_TYPE = 'Web App';
 
 type BannerType = {
@@ -24,12 +24,16 @@ type BannerType = {
   banner_type_name: string;
 };
 
-const Banner = () => {
-  const [banners, setBanners] = useState<BannerType[]>([]);
-  const [loading, setLoading] = useState(true);
+const Banner = ({ initialBanners = [] }: { initialBanners?: any[] }) => {
+  // 1. Initialize state with initialBanners to avoid client-side fetch delay
+  const [banners, setBanners] = useState<BannerType[]>(() => {
+    const data = Array.isArray(initialBanners) ? initialBanners : [];
+    return data.filter((item: any) => item.banner_type_name === BANNER_TYPE);
+  });
+  
+  const [loading, setLoading] = useState(banners.length === 0);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Memoize current banner before any conditional returns
   const currentBanner = useMemo(
     () => banners[currentIndex],
     [banners, currentIndex]
@@ -42,6 +46,12 @@ const Banner = () => {
   }, [banners.length]);
 
   useEffect(() => {
+    // 2. Only fetch if initialBanners wasn't provided or failed
+    if (banners.length > 0) {
+        setLoading(false);
+        return;
+    }
+
     const getBanners = async () => {
       try {
         const response = await fetchBanners();
@@ -55,19 +65,18 @@ const Banner = () => {
         }
       } catch (error) {
         console.error("Error fetching banners:", error);
-        setBanners([]);
       } finally {
         setLoading(false);
       }
     };
-    getBanners();
-  }, []);
 
+    getBanners();
+  }, [banners.length]);
+
+  // 3. Cinematic Skeleton replaces "Loading..." text to prevent layout shift
   if (loading) {
     return (
-      <div className="w-full h-[60vh] md:h-[90vh] bg-gray-100 animate-pulse flex items-center justify-center text-dark font-sans">
-        Loading...
-      </div>
+      <div className="w-full h-[80vh] md:h-[90vh] bg-dark animate-pulse" />
     );
   }
 
@@ -75,7 +84,6 @@ const Banner = () => {
 
   return (
     <section className="w-full relative overflow-hidden h-[80vh] md:h-[90vh] bg-black">
-      {/* 1. Remove mode="wait" to allow cross-fade without showing background */}
       <AnimatePresence initial={false}>
         <motion.div
           key={currentBanner.id}
@@ -85,7 +93,6 @@ const Banner = () => {
           transition={{ duration: ANIMATION_DURATION, ease: "linear" }}
           className="absolute inset-0 w-full h-full"
         >
-          {/* Background Image */}
           <Image 
             src={currentBanner.image_url} 
             alt={currentBanner.title || "Banner"} 
@@ -95,12 +102,12 @@ const Banner = () => {
             sizes="100vw"
           />
           
-          <div className={`absolute inset-0 bg-black/${(OVERLAY_OPACITY * 100).toFixed(0)} flex flex-col justify-end pb-16`}>
+          <div className="absolute inset-0 bg-black/20 flex flex-col justify-end pb-16">
             <div className="content-container text-white">
               <div className="max-w-4xl">
                 <TextAnimation 
                   text={currentBanner.title}
-                  className="text-5xl md:text-7xl banner-highlight"
+                  className="text-5xl md:text-7xl banner-highlight leading-tight"
                   style={{ fontFamily: 'Moralana, serif' }}
                 />
                 
@@ -109,7 +116,7 @@ const Banner = () => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: DESCRIPTION_DELAY, duration: 0.6 }}
-                    className="text-5xl md:text-7xl"
+                    className="text-5xl md:text-7xl leading-tight font-moralana"
                   >
                     {currentBanner.description}
                   </motion.p>
@@ -118,22 +125,17 @@ const Banner = () => {
                 <div className="banner-cta mt-8">
                   <a 
                     href="#collections" 
-                    className="inline-flex items-center gap-2 hover:text-yellow transition-all text-xl font-sans font-medium"
-                    aria-label="Explore Frames collection"
+                    className="inline-flex items-center gap-2 hover:text-yellow transition-all text-xl font-manrope font-medium"
                   >
-                    Explore Frames <GoArrowUpRight className="text-2xl" aria-hidden="true" />
+                    Explore Frames <GoArrowUpRight className="text-2xl" />
                   </a>
                 </div>
 
-                {/* Slider Indicators */}
-                <div className="flex items-center gap-2 mt-[40px]" role="tablist" aria-label="Banner slides">
+                <div className="flex items-center gap-2 mt-[40px]">
                   {banners.map((_, index) => (
                     <button
                       key={index}
                       onClick={() => setCurrentIndex(index)}
-                      role="tab"
-                      aria-selected={currentIndex === index}
-                      aria-label={`Go to slide ${index + 1}`}
                       className="relative cursor-pointer py-2"
                     >
                       <div 
@@ -149,7 +151,7 @@ const Banner = () => {
                               ease: "linear" 
                             }}
                             onAnimationComplete={nextSlide}
-                            className="h-full bg-[#FEC52D]"
+                            className="h-full bg-yellow"
                           />
                         )}
                       </div>

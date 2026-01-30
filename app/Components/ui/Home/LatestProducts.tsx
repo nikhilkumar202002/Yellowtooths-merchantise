@@ -1,3 +1,5 @@
+'use client'
+
 import Image from 'next/image'
 import { MdOutlineArrowOutward } from "react-icons/md";
 import { LiaRupeeSignSolid } from "react-icons/lia";

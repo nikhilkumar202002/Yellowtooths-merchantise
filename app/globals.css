@@ -427,6 +427,7 @@
 
 .crafted-cinema{
   padding: 100px 0px;
+  background-color: var(--color-white);
 }
 .crafted-cinema-para{
   display: flex;
@@ -545,6 +546,7 @@
     left: 20px;
     right: 20px;
     border-radius: 15px;
+    background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 100%);
   }
   .crafted-cinema-right-box-two{
     background-color: var(--color-yellow);
@@ -605,3 +607,34 @@
   .crafted-cinema-wrapper {
     grid-auto-rows: 1fr;
   }
+
+  @media (max-width: 1024px) {
+  .crafted-cinema-heading h2 {
+    font-size: 48px;
+    line-height: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .crafted-cinema-heading h2 {
+    font-size: 36px;
+  }
+  .crafted-cinema-para p {
+    width: 100%;
+    font-size: 16px;
+    text-align: left;
+  }
+}
+
+/* Fix for equal height columns */
+.crafted-cinema-wrapper {
+  align-items: stretch;
+}
+
+/* Ensure images don't look squashed on mobile */
+.crafted-cinema-left-img, 
+.crafted-cinema-right-box-one, 
+.crafted-cinema-right-two {
+  width: 100%;
+  position: relative;
+}

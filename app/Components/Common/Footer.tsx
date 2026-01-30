@@ -4,6 +4,7 @@ import Logo from "../../../public/Logo/yellowtooths.svg";
 import { FaInstagram } from "react-icons/fa";
 import { FaFacebook } from "react-icons/fa6";
 import { FaBehance } from "react-icons/fa";
+import InfiniteTextSlider from './InfiniteTextSlider';
 
 const Footer = () => {
 
@@ -12,6 +13,9 @@ const Footer = () => {
   return (
     <>
       <footer className="main-footer">
+        <div>
+          <InfiniteTextSlider />
+        </div>
         <div className="footer-container content-container bg-black text-white py-16 text-center">
           <div className="footer-top">
             <div className="footer-logo">

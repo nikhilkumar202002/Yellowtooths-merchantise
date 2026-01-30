@@ -6,28 +6,48 @@ import { fetchProducts } from '@/app/services/api'
 import ProductView from '../../Components/ui/product-single/ProductView'
 
 export default function Page() {
-  const { id } = useParams()
-  const [product, setProduct] = useState(null)
-  const [loading, setLoading] = useState(true) // Initialize as true
+  const params = useParams()
+  // Ensure we have a string ID for comparison
+  const id = params?.id as string 
+  
+  const [product, setProduct] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    let isMounted = true;
+
     const loadData = async () => {
-      setLoading(true); // Ensure loading is true when start fetching
+      // Don't restart loading if we already have the product for this ID
+      setLoading(true); 
       try {
         const data = await fetchProducts()
-        const found = data.find((p: any) => (p.id || p._id).toString() === id)
-        setProduct(found)
+        
+        if (isMounted && Array.isArray(data)) {
+          // Robust matching for different ID formats (id vs _id)
+          const found = data.find((p: any) => {
+            const pId = (p.id || p._id || '').toString();
+            return pId === id;
+          });
+          
+          setProduct(found || null);
+        }
       } catch (error) {
         console.error("Error fetching product:", error);
       } finally {
-        // Use a small timeout if the API is too fast to test the skeleton
-        setTimeout(() => setLoading(false), 500); 
+        if (isMounted) {
+          // Keep the small timeout to ensure smooth Skeleton transition
+          setTimeout(() => setLoading(false), 500); 
+        }
       }
     }
     
-    if (id) loadData();
-  }, [id])
+    if (id) {
+      loadData();
+    }
 
-  // Pass both product and loading state
-  return <ProductView product={product} loading={loading} />
+    return () => { isMounted = false; };
+  }, [id]);
+
+  // Return the ProductView which handles its own skeleton via the loading prop
+  return <ProductView product={product} loading={loading} />;
 }

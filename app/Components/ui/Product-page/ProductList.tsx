@@ -71,7 +71,8 @@ const ProductList = ({ gridColumns = 4 }: ProductListProps) => {
     <section className="product-list-section">
       <div className={`grid grid-cols-2 gap-x-4 lg:gap-x-4 gap-y-10 lg:gap-y-14 ${gridConfig[gridColumns]}`}>
         {products.map((product) => {
-          const productId = product.id || product._id
+          const slug = product.slug || product.name.toLowerCase().replace(/ /g, '-');
+            const productId = product.id || product._id;
           const name = product.name
           const category = product.category_name || "Collection" 
           const price = product.formatted_sale_price || product.formatted_price || product.price
@@ -79,7 +80,7 @@ const ProductList = ({ gridColumns = 4 }: ProductListProps) => {
           const isInWishlist = wishlist.includes(productId);
 
           return (
-            <Link href={`/product/${productId}`} key={productId}>
+            <Link href={`/product/${slug}?id=${productId}`} key={productId}>
               <div className="product-card group cursor-pointer flex flex-col h-full relative rounded-none">
                 
                 {/* Image Container */}

@@ -75,13 +75,14 @@ const Header = () => {
             >
               <IoMdMenu />
             </button>
-
+<a href="/wishlist">
             <div className="cursor-pointer hover:text-yellow transition-colors">
               <IoMdHeartEmpty />
             </div>
+            </a>
             
             <a href="/cart">
- <div className="cursor-pointer hover:text-yellow transition-colors relative">
+              <div className="cursor-pointer hover:text-yellow transition-colors relative">
               <LiaShoppingCartSolid />
               <span className="absolute -top-2 -right-2 bg-yellow text-dark text-[10px] font-bold px-1.5 rounded-full">
                 0
