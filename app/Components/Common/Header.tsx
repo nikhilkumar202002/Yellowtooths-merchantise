@@ -80,12 +80,15 @@ const Header = () => {
               <IoMdHeartEmpty />
             </div>
             
-            <div className="cursor-pointer hover:text-yellow transition-colors relative">
+            <a href="/cart">
+ <div className="cursor-pointer hover:text-yellow transition-colors relative">
               <LiaShoppingCartSolid />
               <span className="absolute -top-2 -right-2 bg-yellow text-dark text-[10px] font-bold px-1.5 rounded-full">
                 0
               </span>
             </div>
+            </a>
+           
           </div>
         </div>
       </div>
