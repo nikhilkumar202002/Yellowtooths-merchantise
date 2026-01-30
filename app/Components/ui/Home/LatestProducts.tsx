@@ -78,7 +78,7 @@ const LatestProducts = () => {
               <h2>Latest Products</h2>
             </div>
             <div className="latest-product-button hidden md:block">
-              <a href="" className='flex gap-2'>View All <span className='latest-product-button-icon'><MdOutlineArrowOutward /></span></a>
+              <a href="/shop-all" className='flex gap-2'>View All <span className='latest-product-button-icon'><MdOutlineArrowOutward /></span></a>
             </div>
           </div>
 
