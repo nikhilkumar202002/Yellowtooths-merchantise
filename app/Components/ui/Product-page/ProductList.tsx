@@ -8,6 +8,7 @@ import { IoFlashOutline } from "react-icons/io5"
 import { fetchProducts } from '@/app/services/api'
 import ProductSkeleton from '../../Common/ProductSkeleton' // Import the skeleton
 import PlaceholderProduct from "../../../../public/Images/product-one.jpg"
+import Link from 'next/link'
 
 interface ProductListProps {
   gridColumns?: number;
@@ -65,6 +66,7 @@ const ProductList = ({ gridColumns = 4 }: ProductListProps) => {
           const imageSrc = product.image_url || (Array.isArray(product.images_urls) && product.images_urls[0]) || product.image
 
           return (
+            <Link href={`/product/${productId}`} key={productId}>
             <div key={productId} className="product-card group cursor-pointer flex flex-col h-full">
               <div className="relative aspect-[3/4] overflow-hidden bg-gray-100">
                 {imageSrc ? (
@@ -98,6 +100,7 @@ const ProductList = ({ gridColumns = 4 }: ProductListProps) => {
                 </div>
               </div>
             </div>
+        </Link>
           )
         })}
       </div>
