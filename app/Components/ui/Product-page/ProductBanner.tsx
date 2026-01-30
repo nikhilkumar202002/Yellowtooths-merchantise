@@ -30,7 +30,7 @@ const ProductBanner = () => {
         </nav>
 
         {/* Page Title - Centered by parent text-center */}
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900" style={{fontFamily: 'manrope'}}>
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 capitalize" style={{fontFamily: 'manrope'}}>
           {pathSegments.length > 0 ? pathSegments[pathSegments.length - 1].replace(/-/g, ' ') : 'Our Collection'}
         </h1>
         

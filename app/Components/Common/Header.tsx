@@ -11,11 +11,11 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navLinks = [
-    { name: "Movie Merch", href: "" },
-    { name: "Sculptures", href: "" },
-    { name: "T-Shirts", href: "" },
-    { name: "Fibre Frames", href: "" },
-    { name: "New Drops", href: "" },
+{ name: "Movie Merch", href: "/category/movie-merch" },
+  { name: "Sculptures", href: "/category/sculptures" },
+  { name: "T-Shirts", href: "/category/t-shirts" },
+  { name: "Fibre Frames", href: "/category/fibre-frames" },
+  { name: "New Drops", href: "/category/new-drops" },
   ];
 
   return (
@@ -39,13 +39,15 @@ const Header = () => {
         {/* Left: Logo */}
         <div className="flex-1 flex justify-start items-center">
           <div className="flex-shrink-0">
-           <Image 
+           <a href="/">
+            <Image 
                   src={Logo} 
                   alt="Logo" 
                   width={150} 
                   height={0} 
                   priority // Add this to fix the LCP warning
                 />
+           </a>
           </div>
         </div>
 

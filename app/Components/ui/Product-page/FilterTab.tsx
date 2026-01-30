@@ -1,10 +1,13 @@
 'use client'
 
-import React, { useState } from 'react'
-import { MdKeyboardArrowDown } from "react-icons/md"
+import React, { useState, useRef } from 'react'
+import { MdKeyboardArrowDown, MdChevronLeft, MdChevronRight } from "react-icons/md"
+import { motion, AnimatePresence } from 'framer-motion'
 
 const FilterTab = () => {
   const [activeQuickFilter, setActiveQuickFilter] = useState('All')
+  const [openSections, setOpenSections] = useState<string[]>(['Category', 'Price Range'])
+  const scrollRef = useRef<HTMLDivElement>(null)
 
   const filters = [
     { title: 'Category', options: ['T-Shirts', 'Hoodies', 'Sweatshirts', 'Oversized Tees'] },
@@ -13,20 +16,49 @@ const FilterTab = () => {
     { title: 'Color', options: ['Vintage Black', 'Classic White', 'Cinematic Grey', 'Yellow'] }
   ]
 
+  const toggleSection = (title: string) => {
+    setOpenSections(prev => 
+      prev.includes(title) ? prev.filter(s => s !== title) : [...prev, title]
+    )
+  }
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollRef.current) {
+      const { scrollLeft, clientWidth } = scrollRef.current
+      const scrollTo = direction === 'left' ? scrollLeft - clientWidth / 2 : scrollLeft + clientWidth / 2
+      scrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' })
+    }
+  }
+
   return (
-    <div className="flex flex-col gap-8 sticky top-24">
-      {/* Quick Status Filters */}
-      <div>
-        <h4 className="text-xs uppercase tracking-widest font-bold text-gray-400 mb-4">Collection Status</h4>
-        <div className="flex flex-wrap gap-2">
-          {['All', 'New', 'Best Sellers', 'Limited'].map((tab) => (
+    <div className="flex flex-col gap-6 sticky top-24 pr-2 h-[calc(100vh-120px)] overflow-y-auto overflow-x-hidden [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+      
+      {/* Collection Status Carousel - Clean Layout */}
+      <div className="py-2">
+        <div className="flex items-center justify-between mb-3">
+          <h4 className="text-[10px] uppercase tracking-widest font-medium text-gray-400">Status</h4>
+          <div className="flex gap-1">
+            <button onClick={() => scroll('left')} className="p-1 hover:text-yellow transition-colors">
+              <MdChevronLeft size={20} className="text-gray-400" />
+            </button>
+            <button onClick={() => scroll('right')} className="p-1 hover:text-yellow transition-colors">
+              <MdChevronRight size={20} className="text-gray-400" />
+            </button>
+          </div>
+        </div>
+        
+        <div 
+          ref={scrollRef}
+          className="flex items-center gap-2 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden scroll-smooth"
+        >
+          {['All', 'New', 'Best Sellers', 'Limited', 'Discounts', 'Upcoming'].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveQuickFilter(tab)}
-              className={`px-4 py-1.5 rounded-full text-xs font-manrope transition-all ${
+              className={`px-4 py-1.5 rounded-full text-xs font-manrope whitespace-nowrap transition-all duration-300 border ${
                 activeQuickFilter === tab 
-                  ? 'bg-yellow text-dark font-bold' 
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  ? 'bg-yellow border-yellow text-dark font-medium' 
+                  : 'bg-transparent border-gray-200 text-gray-500 hover:border-dark hover:text-dark'
               }`}
             >
               {tab}
@@ -35,52 +67,92 @@ const FilterTab = () => {
         </div>
       </div>
 
-      {/* Detailed Filters Stack */}
-      <div className="flex flex-col gap-6">
-        {filters.map((filter) => (
-          <div key={filter.title} className="border-b border-gray-100 pb-6">
-            <h4 className="flex justify-between items-center text-sm font-bold font-manrope text-dark mb-4 cursor-pointer group">
-              {filter.title}
-              <MdKeyboardArrowDown className="text-gray-400 group-hover:text-dark transition-colors" size={20}/>
-            </h4>
-            
-            <div className="flex flex-col gap-3">
-              {filter.options.map((option) => (
-                <label key={option} className="flex items-center gap-3 cursor-pointer group/label">
-                  <div className="relative flex items-center">
-                    <input 
-                      type="checkbox" 
-                      className="peer w-4 h-4 rounded border-gray-300 text-yellow focus:ring-yellow cursor-pointer appearance-none border checked:bg-yellow checked:border-yellow transition-all" 
-                    />
-                    <div className="absolute text-dark opacity-0 peer-checked:opacity-100 pointer-events-none left-0.5 top-0.5">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
+      {/* Detailed Filters - Seamless Accordion */}
+      <div className="flex flex-col">
+        {filters.map((filter) => {
+          const isOpen = openSections.includes(filter.title)
+          
+          return (
+            <div key={filter.title} className="border-b border-gray-100">
+              <button 
+                onClick={() => toggleSection(filter.title)}
+                className="w-full flex justify-between items-center py-4 text-[13px] font-medium font-manrope text-dark hover:text-yellow transition-colors group"
+              >
+                <span>{filter.title}</span>
+                <MdKeyboardArrowDown 
+                  className={`text-gray-400 transition-transform duration-300 ${isOpen ? 'rotate-180 text-yellow' : ''}`} 
+                  size={20}
+                />
+              </button>
+              
+              <AnimatePresence>
+                {isOpen && (
+                  <motion.div 
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="flex flex-col gap-3 pb-5 pl-1">
+                      {filter.options.map((option) => (
+                        <label key={option} className="flex items-center gap-3 cursor-pointer group/label">
+                          <input 
+                            type="checkbox" 
+                            className="w-4 h-4 rounded border-gray-300 text-yellow focus:ring-yellow cursor-pointer accent-yellow" 
+                          />
+                          <span className="text-[12px] font-manrope text-gray-500 group-hover/label:text-dark transition-colors">{option}</span>
+                        </label>
+                      ))}
                     </div>
-                  </div>
-                  <span className="text-sm font-manrope text-gray-600 group-hover/label:text-dark transition-colors">{option}</span>
-                </label>
-              ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
-          </div>
-        ))}
+          )
+        })}
 
-        {/* Price Slider Section */}
-        <div className="pb-6">
-          <h4 className="text-sm font-bold font-manrope text-dark mb-4">Price Range</h4>
-          <div className="space-y-4">
-            <input type="range" className="w-full accent-yellow h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer" min="0" max="5000" />
-            <div className="flex justify-between text-xs font-manrope text-gray-500 font-bold">
-              <span>₹0</span>
-              <span>₹5,000+</span>
-            </div>
-          </div>
+        {/* Price Range Section - Seamless */}
+        <div className="">
+          <button 
+            onClick={() => toggleSection('Price Range')}
+            className="w-full flex justify-between items-center py-4 text-[13px] font-medium font-manrope text-dark hover:text-yellow transition-colors"
+          >
+            <span>Price Range</span>
+            <MdKeyboardArrowDown 
+              className={`text-gray-400 transition-transform duration-300 ${openSections.includes('Price Range') ? 'rotate-180 text-yellow' : ''}`} 
+              size={20}
+            />
+          </button>
+          
+          <AnimatePresence>
+            {openSections.includes('Price Range') && (
+              <motion.div 
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="overflow-hidden"
+              >
+                <div className="px-1 pb-6 space-y-4">
+                  <input 
+                    type="range" 
+                    className="w-full accent-yellow h-1 bg-gray-100 rounded-lg appearance-none cursor-pointer" 
+                    min="0" 
+                    max="5000" 
+                  />
+                  <div className="flex justify-between items-center text-[10px] font-medium text-gray-400">
+                    <span className="bg-gray-50 px-2 py-1 rounded border border-gray-100">₹0</span>
+                    <span className="bg-gray-50 px-2 py-1 rounded border border-gray-100">₹5,000+</span>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
-      {/* Clear Filters Button */}
-      <button className="w-full py-3 border border-gray-200 text-gray-500 text-xs font-bold rounded-lg hover:bg-gray-50 transition-colors uppercase tracking-widest">
-        Clear All Filters
+      {/* Action Button */}
+      <button className="w-full py-3 bg-dark text-white text-[10px] font-medium rounded-full hover:bg-yellow hover:text-dark transition-all duration-300 uppercase tracking-widest mt-2">
+        Clear All
       </button>
     </div>
   )
