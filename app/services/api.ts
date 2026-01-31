@@ -104,3 +104,30 @@ export const register = async (userData: any) => {
     return { success: false, message: "Server connection failed" };
   }
 };
+
+export const logoutUser = async () => {
+  const token = localStorage.getItem('token');
+  try {
+    const response = await fetch(`${BASE_URL}/logout`, {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}` 
+      },
+    });
+    return await response.json();
+  } catch (error) {
+    return { success: false };
+  }
+};
+
+export const getCountries = async () => {
+  try {
+    const response = await fetch(`${BASE_URL}/countries`);
+    const result = await response.json();
+    return result; // Assuming this returns { success: true, data: [...] }
+  } catch (error) {
+    console.error("Fetch countries error:", error);
+    return { success: false, data: [] };
+  }
+};

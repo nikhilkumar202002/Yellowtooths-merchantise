@@ -25,3 +25,24 @@
   height: 100% !important;
   object-fit: cover;
 }
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f9fafb;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #e5e7eb;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #fbbf24; /* yellow theme color */
+}
+
+/* Ensure the grid container feels like a single input */
+.focus-within\:bg-white:focus-within {
+  background-color: #ffffff !important;
+}

@@ -41,12 +41,19 @@ const Login = () => {
     try {
       const result = await login(formData); // Sends identifier and password
       
-      if (result.success) {
-        localStorage.setItem('token', result.token);
-        localStorage.setItem('user', JSON.stringify(result.data));
-        window.dispatchEvent(new Event('authChange'));
-        router.push('/');
-      } else {
+     if (result.success) {
+  const now = Date.now().toString();
+  
+  localStorage.setItem('token', result.data.token);
+  localStorage.setItem('user', JSON.stringify(result.data.user));
+  
+  // Custom Timestamps for your logic
+  localStorage.setItem('loginTimestamp', now);      // Fixed point for 1 month
+  localStorage.setItem('lastActiveTimestamp', now); // Resets on activity
+  
+  window.dispatchEvent(new Event('authChange'));
+  router.push('/');
+} else {
         setError(result.message || 'Invalid credentials. Please try again.');
       }
     } catch (err) {
