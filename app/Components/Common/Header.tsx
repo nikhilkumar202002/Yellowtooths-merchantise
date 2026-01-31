@@ -21,12 +21,12 @@ const Header = () => {
   return (
     <nav className="w-full font-sans relative">
       {/* Top Nav */}
-      <div className=" text-dark py-2 content-container uppercase flex items-center justify-between text-xs sm:text-sm font-medium">
+      <div className=" text-dark py-1.5 content-container uppercase flex items-center justify-between text-xs sm:text-sm font-medium">
         <div className="hidden md:block w-1/3"></div>
         <div className="w-full md:w-1/3 text-center">
-          <p>Free Shipping all bulk orders!</p>
+          <p className="text-[13px]">Free Shipping all bulk orders!</p>
         </div>
-        <div className="hidden md:flex w-1/3 justify-end gap-6">
+        <div className="text-[13px] hidden md:flex w-1/3 justify-end gap-6">
           <a href="" className="hover:opacity-70 transition-opacity">Our stores</a>
           <a href="" className="hover:opacity-70 transition-opacity">Login</a>
           <a href="" className="hover:opacity-70 transition-opacity">Register</a>
@@ -34,7 +34,7 @@ const Header = () => {
       </div>
 
       {/* Main Nav */}
-      <div className="bg-dark text-white py-6 content-container flex items-center justify-between relative z-50">
+      <div className="bg-dark text-white py-4 content-container flex items-center justify-between relative z-50">
         
         {/* Left: Logo */}
         <div className="flex-1 flex justify-start items-center">
@@ -52,7 +52,7 @@ const Header = () => {
         </div>
 
         {/* Middle: Desktop Links */}
-        <div className="hidden xl:flex items-center gap-8 whitespace-nowrap text-[17px] tracking-wide">
+        <div className="hidden xl:flex items-center gap-5 whitespace-nowrap text-[16px] tracking-wide">
           {navLinks.map((link) => (
             <a key={link.name} href={link.href} className="hover:text-yellow transition-colors">
               {link.name}
@@ -66,7 +66,7 @@ const Header = () => {
             <SearchBar />
           </div>
           
-          <div className="flex items-center gap-4 md:gap-6 text-2xl flex-shrink-0">
+          <div className="flex items-center gap-4 md:gap-4 text-2xl flex-shrink-0">
             {/* Hamburger moved right before Wishlist icon */}
             <button 
               className="xl:hidden text-3xl hover:text-yellow transition-colors order-first"
@@ -75,7 +75,7 @@ const Header = () => {
             >
               <IoMdMenu />
             </button>
-<a href="/wishlist">
+              <a href="/wishlist">
             <div className="cursor-pointer hover:text-yellow transition-colors">
               <IoMdHeartEmpty />
             </div>
