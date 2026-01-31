@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react"; // Added useEffect
 import Logo from "../../../public/Logo/yellowtooths.svg";
 import { LiaShoppingCartSolid } from "react-icons/lia";
 import { IoMdHeartEmpty, IoMdMenu, IoMdClose } from "react-icons/io";
@@ -9,13 +9,34 @@ import SearchBar from "./SearchBar";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Added auth state
+
+  // Function to check if user is logged in
+  const checkAuth = () => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    setIsLoggedIn(!!token);
+  };
+
+  useEffect(() => {
+    checkAuth();
+    // Listen for the custom event dispatched by Login/Register components
+    window.addEventListener('authChange', checkAuth);
+    return () => window.removeEventListener('authChange', checkAuth);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setIsLoggedIn(false);
+    window.location.href = '/'; // Redirect to home on logout
+  };
 
   const navLinks = [
-{ name: "Movie Merch", href: "/category/movie-merch" },
-  { name: "Sculptures", href: "/category/sculptures" },
-  { name: "T-Shirts", href: "/category/t-shirts" },
-  { name: "Fibre Frames", href: "/category/fibre-frames" },
-  { name: "New Drops", href: "/category/new-drops" },
+    { name: "Movie Merch", href: "/category/movie-merch" },
+    { name: "Sculptures", href: "/category/sculptures" },
+    { name: "T-Shirts", href: "/category/t-shirts" },
+    { name: "Fibre Frames", href: "/category/fibre-frames" },
+    { name: "New Drops", href: "/category/new-drops" },
   ];
 
   return (
@@ -26,10 +47,23 @@ const Header = () => {
         <div className="w-full md:w-1/3 text-center">
           <p className="text-[13px]">Free Shipping all bulk orders!</p>
         </div>
-        <div className="text-[13px] hidden md:flex w-1/3 justify-end gap-6">
+        <div className="text-[13px] hidden md:flex w-1/3 justify-end gap-6 items-center">
           <a href="" className="hover:opacity-70 transition-opacity">Our stores</a>
-          <a href="/login" className="hover:opacity-70 transition-opacity">Login</a>
-          <a href="" className="hover:opacity-70 transition-opacity">Register</a>
+          
+          {/* Conditional Rendering for Desktop Auth */}
+          {isLoggedIn ? (
+            <button 
+              onClick={handleLogout} 
+              className="hover:opacity-70 transition-opacity font-bold uppercase"
+            >
+              Logout
+            </button>
+          ) : (
+            <>
+              <a href="/login" className="hover:opacity-70 transition-opacity">Login</a>
+              <a href="/register" className="hover:opacity-70 transition-opacity">Register</a>
+            </>
+          )}
         </div>
       </div>
 
@@ -41,12 +75,12 @@ const Header = () => {
           <div className="flex-shrink-0">
            <a href="/">
             <Image 
-                  src={Logo} 
-                  alt="Logo" 
-                  width={150} 
-                  height={0} 
-                  priority // Add this to fix the LCP warning
-                />
+              src={Logo} 
+              alt="Logo" 
+              width={150} 
+              height={0} 
+              priority 
+            />
            </a>
           </div>
         </div>
@@ -67,7 +101,6 @@ const Header = () => {
           </div>
           
           <div className="flex items-center gap-4 md:gap-4 text-2xl flex-shrink-0">
-            {/* Hamburger moved right before Wishlist icon */}
             <button 
               className="xl:hidden text-3xl hover:text-yellow transition-colors order-first"
               onClick={() => setIsMenuOpen(true)}
@@ -75,27 +108,25 @@ const Header = () => {
             >
               <IoMdMenu />
             </button>
-              <a href="/wishlist">
-            <div className="cursor-pointer hover:text-yellow transition-colors">
-              <IoMdHeartEmpty />
-            </div>
+            <a href="/wishlist">
+              <div className="cursor-pointer hover:text-yellow transition-colors">
+                <IoMdHeartEmpty />
+              </div>
             </a>
             
             <a href="/cart">
               <div className="cursor-pointer hover:text-yellow transition-colors relative">
-              <LiaShoppingCartSolid />
-              <span className="absolute -top-2 -right-2 bg-yellow text-dark text-[10px] font-bold px-1.5 rounded-full">
-                0
-              </span>
-            </div>
+                <LiaShoppingCartSolid />
+                <span className="absolute -top-2 -right-2 bg-yellow text-dark text-[10px] font-bold px-1.5 rounded-full">
+                  0
+                </span>
+              </div>
             </a>
-           
           </div>
         </div>
       </div>
 
-      {/* Mobile Menu Drawer Redesign */}
-      {/* Backdrop */}
+      {/* Mobile Menu Drawer */}
       {isMenuOpen && (
         <div 
           className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] xl:hidden"
@@ -103,7 +134,6 @@ const Header = () => {
         />
       )}
 
-      {/* Drawer */}
       <div 
         className={`fixed top-0 left-0 h-full w-[80%] max-w-[350px] bg-dark z-[70] shadow-2xl transform transition-transform duration-300 ease-in-out xl:hidden ${
           isMenuOpen ? "translate-x-0" : "-translate-x-full"
@@ -141,7 +171,18 @@ const Header = () => {
           <div className="mt-auto p-6 bg-white/5 flex flex-col gap-4">
             <div className="flex flex-col gap-2 text-white">
                <a href="" className="text-sm font-medium hover:text-yellow">Our Stores</a>
-               <a href="" className="text-sm font-medium hover:text-yellow">Account / Login</a>
+               
+               {/* Conditional Rendering for Mobile Auth */}
+               {isLoggedIn ? (
+                 <button 
+                   onClick={handleLogout} 
+                   className="text-sm font-medium text-left hover:text-red-500 transition-colors"
+                 >
+                   Logout
+                 </button>
+               ) : (
+                 <a href="/login" className="text-sm font-medium hover:text-yellow">Account / Login</a>
+               )}
             </div>
             <div className="h-[1px] bg-white/10 w-full" />
             <p className="text-xs text-white">Free Shipping on all bulk orders!</p>

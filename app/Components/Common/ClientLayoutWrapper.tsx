@@ -12,7 +12,7 @@ export default function ClientLayoutWrapper({
   const pathname = usePathname();
   
   // Logic to hide layout on specific pages
-  const hideLayout = pathname === "/login";
+ const hideLayout = pathname === "/login" || pathname === "/register";
 
   return (
     <>

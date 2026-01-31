@@ -74,3 +74,33 @@ export const fetchProducts = async () => {
     return [];
   }
 };
+
+export const login = async (credentials: any) => {
+  try {
+    const response = await fetch(`${BASE_URL}/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(credentials),
+    });
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("Login API error:", error);
+    return { success: false, message: "Server connection failed" };
+  }
+};
+
+export const register = async (userData: any) => {
+  try {
+    const response = await fetch(`${BASE_URL}/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(userData),
+    });
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("Register API error:", error);
+    return { success: false, message: "Server connection failed" };
+  }
+};
