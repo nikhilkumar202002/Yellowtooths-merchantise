@@ -1,14 +1,14 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { fetchProductById } from '@/app/services/api' // Use the specific fetcher
+import { fetchProducts } from '@/app/services/api'
 import ProductView from '../../Components/ui/product-single/ProductView'
 
 interface ProductClientProps {
-  id: string;
+  slug: string;
 }
 
-const ProductClient = ({ id }: ProductClientProps) => {
+const ProductClient = ({ slug }: ProductClientProps) => {
   const [product, setProduct] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
@@ -16,33 +16,29 @@ const ProductClient = ({ id }: ProductClientProps) => {
     let isMounted = true;
 
     const loadData = async () => {
-      // Start loading state
       setLoading(true); 
       try {
-        // Fetch the specific product directly from the single product endpoint
-        const data = await fetchProductById(id);
+        const { products } = await fetchProducts();
         
-        if (isMounted) {
-          setProduct(data);
+        if (isMounted && Array.isArray(products)) {
+          // Identify product by slug instead of ID
+          const found = products.find((p: any) => p.slug === slug);
+          setProduct(found || null);
         }
       } catch (error) {
         console.error("Error fetching product on client:", error);
       } finally {
         if (isMounted) {
-          // Maintain the smooth transition timing for your cinematic UI
           setTimeout(() => setLoading(false), 500); 
         }
       }
     }
     
-    if (id) {
-      loadData();
-    }
+    if (slug) loadData();
 
     return () => { isMounted = false; };
-  }, [id]);
+  }, [slug]);
 
-  // Pass data to ProductView. ProductView handles the skeleton internally
   return <ProductView product={product} loading={loading} />;
 }
 

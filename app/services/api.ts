@@ -57,16 +57,44 @@ export const fetchCollections = async () => {
   }
 };
 
-export const fetchProducts = async () => {
+export const fetchProducts = async (page: number = 1, categorySlug?: string) => {
   try {
-    const response = await fetch(`${BASE_URL}/products`);
+    // We pass per_page=20 as requested. We add category slug if provided.
+    let url = `${BASE_URL}/products?page=${page}&per_page=20`;
+    if (categorySlug) url += `&category=${categorySlug}`;
+
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Failed to fetch");
+    
     const result = await response.json();
-    // Ensure you are returning the array inside 'data'
-    return result.data; 
+    return {
+      products: result.data || [],
+      pagination: result.pagination || null
+    };
   } catch (error) {
-    console.error("fetchProducts error:", error);
-    return [];
+    console.error("API Error:", error);
+    return { products: [], pagination: null };
   }
+};
+
+// Required for Static Export: Fetches IDs from ALL pages for pre-rendering
+export const fetchAllProductIds = async () => {
+  let allIds: string[] = [];
+  let currentPage = 1;
+  let hasMore = true;
+
+  while (hasMore) {
+    const { products, pagination } = await fetchProducts(currentPage);
+    if (products.length === 0) break;
+    products.forEach((p: any) => allIds.push((p.id || p._id).toString()));
+    
+    if (pagination && pagination.current_page < pagination.last_page) {
+      currentPage++;
+    } else {
+      hasMore = false;
+    }
+  }
+  return allIds;
 };
 
 export const fetchProductById = async (id: string) => {

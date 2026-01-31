@@ -1,30 +1,27 @@
-// app/product/[id]/page.tsx
+// app/product/[slug]/page.tsx
 import { fetchProducts } from '@/app/services/api';
 import ProductClient from './ProductClient';
 
 /**
- * Required for static export: Tells Next.js which [id] pages to pre-render.
+ * Required for static export: Tells Next.js which [slug] pages to pre-render.
  */
 export async function generateStaticParams() {
   try {
-    const data = await fetchProducts();
+    const { products } = await fetchProducts(); // Fetches the array from result.data
     
-    if (!Array.isArray(data)) return [];
+    if (!Array.isArray(products)) return [];
 
-    // Map your API data to the required format for the [id] segment
-    return data.map((product: any) => ({
-      id: (product.id || product._id || '').toString(),
+    // Map your API data to the required format for the [slug] segment
+    return products.map((product: any) => ({
+      slug: (product.slug || '').toString(),
     }));
   } catch (error) {
     console.error("Static generation fetch failed:", error);
-    return [{ id: '102' }]; 
+    return []; 
   }
 }
 
-// UPDATE: Added async/await for the params
-export default async function Page({ params }: { params: Promise<{ id: string }> }) {
-  const resolvedParams = await params; // Unwrapping the Promise
-  const id = resolvedParams.id;
-
-  return <ProductClient id={id} />;
+export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
+  const resolvedParams = await params; // Unwrapping the Promise for Next.js 15+
+  return <ProductClient slug={resolvedParams.slug} />;
 }

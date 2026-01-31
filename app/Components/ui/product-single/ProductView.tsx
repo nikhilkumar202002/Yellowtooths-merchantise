@@ -91,6 +91,11 @@ const ProductView = ({ product, loading }: ProductViewProps) => {
               <span className="text-[10px] uppercase tracking-[0.25em] font-bold text-gray-400 mb-3 font-manrope">
                 Official Cinematic Collection
               </span>
+              {product.sku && (
+                  <span className="text-[10px] text-gray-400 font-bold font-manrope uppercase tracking-widest bg-gray-50 px-2 py-1">
+                    SKU: {product.sku}
+                  </span>
+                )}
               <h1 className="text-4xl md:text-5xl font-moralana text-dark leading-[1.1] mb-5">{product.name}</h1>
               <div className="flex items-center gap-4 mb-8">
                 <div className="flex text-yellow text-xs"><HiMiniStar /><HiMiniStar /><HiMiniStar /><HiMiniStar /><HiMiniStar /></div>
