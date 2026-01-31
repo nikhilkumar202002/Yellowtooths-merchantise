@@ -28,7 +28,7 @@ const Header = () => {
         </div>
         <div className="text-[13px] hidden md:flex w-1/3 justify-end gap-6">
           <a href="" className="hover:opacity-70 transition-opacity">Our stores</a>
-          <a href="" className="hover:opacity-70 transition-opacity">Login</a>
+          <a href="/login" className="hover:opacity-70 transition-opacity">Login</a>
           <a href="" className="hover:opacity-70 transition-opacity">Register</a>
         </div>
       </div>

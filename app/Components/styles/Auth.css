@@ -1,0 +1,27 @@
+/* app/styles/Auth.css */
+
+.login-left-image {
+  background-color: #ffffff; /* Use white to prevent black flash during transitions */
+  position: relative;
+}
+
+/* Ensure images stack correctly during cross-fade */
+.login-left-image > div {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  will-change: filter, opacity;
+}
+
+.login-right-content {
+  z-index: 30;
+  position: relative;
+  background-color: white;
+}
+
+/* Maintain crispness */
+.login-left-image img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+}

@@ -1,0 +1,19 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "image": "/Images/login-image-one.jpg",
+      "alt": "Flat Knit Sweater in black"
+    },
+    {
+      "id": 2,
+      "image": "/Images/login-image-two.jpg",
+      "alt": "Blue Knitted Stripe long sleeve shirt"
+    },
+    {
+      "id": 3,
+      "image": "/Images/login-image-three.jpg",
+      "alt": "Beige Knit Blazer for cinematic look"
+    }
+  ]
+}
