@@ -4,9 +4,11 @@ import React, { useState } from 'react'
 import { FaChevronDown } from 'react-icons/fa'
 
 const Faq = () => {
-  const [expandedIndex, setExpandedIndex] = useState(null)
+  // Define state type as string or null to avoid implicit 'any' errors
+  const [expandedIndex, setExpandedIndex] = useState<string | null>(null)
 
-  const toggleFaq = (index) => {
+  // Explicitly type the index parameter as a string
+  const toggleFaq = (index: string) => {
     setExpandedIndex(expandedIndex === index ? null : index)
   }
 

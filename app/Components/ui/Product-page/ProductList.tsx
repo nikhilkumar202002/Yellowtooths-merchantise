@@ -80,7 +80,7 @@ const ProductList = ({ gridColumns = 4 }: ProductListProps) => {
           const isInWishlist = wishlist.includes(productId);
 
           return (
-            <Link href={`/product/${slug}?id=${productId}`} key={productId}>
+         <Link href={`/product/${productId}`} key={productId}>
               <div className="product-card group cursor-pointer flex flex-col h-full relative rounded-none">
                 
                 {/* Image Container */}

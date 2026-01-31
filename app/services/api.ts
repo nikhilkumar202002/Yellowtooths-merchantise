@@ -60,18 +60,30 @@ export const fetchCollections = async () => {
 export const fetchProducts = async () => {
   try {
     const response = await fetch(`${BASE_URL}/products`);
-    if (!response.ok) throw new Error("Network response was not ok");
+    const result = await response.json();
+    // Ensure you are returning the array inside 'data'
+    return result.data; 
+  } catch (error) {
+    console.error("fetchProducts error:", error);
+    return [];
+  }
+};
+
+export const fetchProductById = async (id: string) => {
+  try {
+    const response = await fetch(`${BASE_URL}/products/${id}`);
+    if (!response.ok) throw new Error("Product not found");
     
     const result = await response.json();
     
-    // API returns { success: true, data: [...] }
-    if (result.success && Array.isArray(result.data)) {
+    // API returns { success: true, data: { ...product details... } }
+    if (result.success && result.data) {
       return result.data;
     }
-    return [];
+    return null;
   } catch (error) {
-    console.error("Error fetching products:", error);
-    return [];
+    console.error(`Error fetching product ${id}:`, error);
+    return null;
   }
 };
 

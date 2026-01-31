@@ -1,23 +1,20 @@
-'use client'
+// app/category/[slug]/page.tsx
+import CategoryClient from './CategoryClient';
 
-import React from 'react'
-import { useParams } from 'next/navigation'
-import ProductBanner from '@/app/Components/ui/Product-page/ProductBanner'
-import ProductPageContainer from '@/app/Components/ui/Product-page/ProductPageContainer'
-
-const CategoryPage = () => {
-  const params = useParams()
-  const slug = params.slug as string
-
-  return (
-    <div className="category-page">
-      {/* The ProductBanner will automatically extract the 'slug' for the breadcrumbs */}
-      <ProductBanner />
-      
-      {/* The Container handles the layout with FilterTab on the left and ProductList on the right */}
-      <ProductPageContainer />
-    </div>
-  )
+export async function generateStaticParams() {
+  return [
+    { slug: 'movie-merch' },
+    { slug: 'sculptures' },
+    { slug: 't-shirts' },
+    { slug: 'fibre-frames' },
+    { slug: 'new-drops' }
+  ];
 }
 
-export default CategoryPage
+// UPDATE: Added async/await for category params
+export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
+  const resolvedParams = await params; // Unwrapping the Promise
+  const slug = resolvedParams.slug;
+
+  return <CategoryClient />; // Your component already uses useParams() internally
+}
