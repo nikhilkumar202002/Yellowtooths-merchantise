@@ -1,6 +1,15 @@
 // lib/api.ts
 const BASE_URL = "https://devadmin.yellowtooths.com/api";
 
+const getAuthHeaders = () => {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+  return {
+    "Content-Type": "application/json",
+    "Accept": "application/json", // CRITICAL: Prevents the server from redirecting to login/home
+    ...(token ? { "Authorization": `Bearer ${token}` } : {}),
+  };
+};
+
 export const fetchBanners = async () => {
   try {
     const response = await fetch(`${BASE_URL}/banners`);
@@ -115,6 +124,27 @@ export const fetchProductById = async (id: string) => {
   }
 };
 
+export const fetchProductsByCategory = async (categoryId: string | number) => {
+  try {
+    // 1. Get the list of product IDs for the category
+    const response = await fetch(`${BASE_URL}/categories/${categoryId}/products`);
+    const result = await response.json();
+
+    if (result.success && result.data.product_ids) {
+      // 2. Map those IDs to full product details
+      const productPromises = result.data.product_ids.map((id: number) => 
+        fetchProductById(id.toString())
+      );
+      const products = await Promise.all(productPromises);
+      return products.filter(p => p !== null);
+    }
+    return [];
+  } catch (error) {
+    console.error("Error fetching category products:", error);
+    return [];
+  }
+};
+
 export const login = async (credentials: any) => {
   try {
     const response = await fetch(`${BASE_URL}/login`, {
@@ -169,5 +199,102 @@ export const getCountries = async () => {
   } catch (error) {
     console.error("Fetch countries error:", error);
     return { success: false, data: [] };
+  }
+};
+
+export const fetchCart = async () => {
+  try {
+    const response = await fetch(`${BASE_URL}/cart?t=${Date.now()}`, {
+      method: "GET",
+      headers: {
+        ...getAuthHeaders(),
+        "Cache-Control": "no-cache",
+        "Pragma": "no-cache"
+      },
+      cache: "no-store",
+    });
+
+    return await response.json();
+  } catch (error) {
+    console.error("Fetch cart error:", error);
+    return { success: false, data: [] };
+  }
+};
+
+
+export const addToCart = async (productId: string, quantity: number = 1) => {
+  try {
+    const response = await fetch(`${BASE_URL}/cart`, {
+      method: "POST",
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ product_id: productId, quantity }),
+    });
+
+    // If the response is a redirect (302), it means the token is invalid
+    if (response.redirected) {
+       console.error("Session expired, redirecting to login");
+       return { success: false, message: "Session expired. Please login again." };
+    }
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("Add to cart API error:", error);
+    // This is where your current error is caught
+    return { success: false, message: "Network error or unauthorized access. Check your login." };
+  }
+};
+
+export const deleteCartItem = async (cartItemId: number) => {
+  try {
+    const response = await fetch(`${BASE_URL}/cart/${cartItemId}`, {
+      method: "DELETE",
+      headers: {
+        ...getAuthHeaders(),
+        "Cache-Control": "no-cache",
+        "Pragma": "no-cache",
+      },
+      cache: "no-store",
+    });
+
+    // Some APIs return 204 No Content — don’t call response.json() then
+    let data: any = null;
+    const contentType = response.headers.get("content-type") || "";
+
+    if (contentType.includes("application/json")) {
+      data = await response.json();
+    }
+
+    return {
+      ok: response.ok,
+      status: response.status,
+      data,
+      // keep success for compatibility if you want
+      success: response.ok,
+    };
+  } catch (error) {
+    console.error("Delete cart item error:", error);
+    return { ok: false, success: false };
+  }
+};
+
+/**
+ * Updates the quantity of a specific item in the cart.
+ * @param cartItemId - The unique ID of the cart record (e.g., /cart/1).
+ * @param quantity - The new absolute quantity to set.
+ */
+export const updateCartQuantity = async (cartItemId: string | number, quantity: number) => {
+  try {
+    const response = await fetch(`${BASE_URL}/cart/${cartItemId}`, {
+      method: "PUT", // Use "PATCH" if your API specifically requires it
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ quantity }),
+    });
+    
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("Update cart quantity error:", error);
+    return { success: false, message: "Failed to update quantity" };
   }
 };

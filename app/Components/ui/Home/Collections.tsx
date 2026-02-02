@@ -5,6 +5,7 @@ import { fetchCollections } from '@/app/services/api';
 import Image from 'next/image';
 import useEmblaCarousel from 'embla-carousel-react';
 import { MdOutlineArrowOutward } from "react-icons/md";
+import { useRouter } from 'next/navigation';
 
 type SubCategory = {
   id: number;
@@ -22,6 +23,8 @@ const Collections = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [imageError, setImageError] = useState<{ [key: number]: boolean }>({});
+
+  const router = useRouter();
 
   const [emblaRef] = useEmblaCarousel({ 
     align: 'start', 
@@ -78,10 +81,10 @@ const Collections = () => {
         <div className="overflow-hidden md:overflow-visible" ref={emblaRef}>
           <div className="flex md:grid md:grid-cols-3 lg:gap-5 md:gap-5 gap-4">
             {categories.map((category) => (
-              <div 
+             <div 
                 key={category.id} 
-                /* Changed fixed height to aspect-[3/4] for responsive scaling */
-                className="relative min-w-[85%] md:min-w-0 flex-shrink-0 aspect-[3/4] group overflow-hidden bg-gray-100"
+                className="relative min-w-[85%] md:min-w-0 flex-shrink-0 aspect-[3/4] group overflow-hidden bg-gray-100 cursor-pointer"
+                onClick={() => router.push(`/category/${category.id}`)} // Navigate using ID
               >
                 {category.image_url && !imageError[category.id] ? (
                   <Image
@@ -113,9 +116,9 @@ const Collections = () => {
                     </h3>
                     
                     {/* Explore Button */}
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+                   <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
                       <button className="text-[10px] font-bold border-b border-yellow pb-1 tracking-[0.2em] uppercase font-manrope text-yellow">
-                        EXPLORE NOW
+                        EXPLORE {category.name}
                       </button>
                     </div>
                   </div>

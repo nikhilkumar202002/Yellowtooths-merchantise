@@ -19,7 +19,7 @@ const SearchBar = () => {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search for products..."
-        className="block w- pl-10 pr-10 py-2 bg-[#2A2A2A] border border-transparent 
+        className="block w-full pl-10 pr-10 py-2 bg-[#2A2A2A] border border-transparent 
                    rounded-full text-white placeholder-gray-400 text-sm
                    focus:outline-none focus:ring-1 focus:ring-yellow focus:bg-dark 
                    transition-all duration-200"

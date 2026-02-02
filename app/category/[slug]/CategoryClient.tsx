@@ -5,17 +5,16 @@ import { useParams } from 'next/navigation'
 import ProductBanner from '@/app/Components/ui/Product-page/ProductBanner'
 import ProductPageContainer from '@/app/Components/ui/Product-page/ProductPageContainer'
 
-const CategoryPage = () => {
+const CategoryClient = () => {
   const params = useParams()
   const slug = params?.slug as string
 
   return (
     <div className="category-page">
-      <ProductBanner />
-      {/* PASS THE SLUG HERE */}
+      <ProductBanner categoryId={slug} />
       <ProductPageContainer categorySlug={slug} />
     </div>
   )
 }
 
-export default CategoryPage;
+export default CategoryClient;

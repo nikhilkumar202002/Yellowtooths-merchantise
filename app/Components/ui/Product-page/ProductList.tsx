@@ -1,12 +1,13 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation';
 import Image from 'next/image'
 import { LiaRupeeSignSolid, LiaShoppingBagSolid } from "react-icons/lia"
 import { HiMiniStar, HiHeart, HiOutlineHeart } from "react-icons/hi2" 
-import { IoFlashOutline } from "react-icons/io5"
+import { IoFlashOutline, IoCheckmarkCircle } from "react-icons/io5" // Added IoCheckmarkCircle
 import { MdChevronLeft, MdChevronRight } from "react-icons/md"
-import { fetchProducts } from '@/app/services/api'
+import { fetchProducts, addToCart, fetchProductsByCategory } from '@/app/services/api'
 import ProductSkeleton from '../../Common/ProductSkeleton'
 import PlaceholderProduct from "../../../../public/Images/product-one.jpg"
 import Link from 'next/link'
@@ -22,6 +23,9 @@ const ProductList = ({ gridColumns = 4, categorySlug }: ProductListProps) => {
   const [currentPage, setCurrentPage] = useState(1)
   const [pagination, setPagination] = useState<any>(null)
   const [wishlist, setWishlist] = useState<string[]>([]) 
+  const [showAddedMessage, setShowAddedMessage] = useState<string | null>(null);
+  
+  const router = useRouter(); // Initialize router
 
   const gridConfig: { [key: number]: string } = {
     2: 'md:grid-cols-2',
@@ -30,30 +34,32 @@ const ProductList = ({ gridColumns = 4, categorySlug }: ProductListProps) => {
   };
 
   useEffect(() => {
-    let mounted = true
-    const load = async () => {
-      setLoading(true)
+    const loadProducts = async () => {
+      setLoading(true);
       try {
-        // Corrected: Fetch 20 products based on current page and category
-        const { products: data, pagination: meta } = await fetchProducts(currentPage, categorySlug)
-        
-        if (mounted) {
-          setProducts(data)
-          setPagination(meta)
+        let result;
+        if (categorySlug) {
+          // Use the specialized ID-based category fetcher
+          const catProducts = await fetchProductsByCategory(categorySlug);
+          result = { products: catProducts, pagination: null };
+        } else {
+          // Default shop-all fetcher
+          result = await fetchProducts(currentPage);
+        }
+
+        if (result && Array.isArray(result.products)) {
+          setProducts(result.products);
+          setPagination(result.pagination || null);
         }
       } catch (error) {
-        console.error("Failed to load products:", error)
+        console.error("Failed to load products:", error);
       } finally {
-        if (mounted) {
-          // Cinematic transition delay
-          setTimeout(() => setLoading(false), 500)
-        }
+        setLoading(false);
       }
-    }
-    load()
-    window.scrollTo({ top: 0, behavior: 'smooth' }); 
-    return () => { mounted = false }
-  }, [currentPage, categorySlug])
+    };
+    
+    loadProducts();
+  }, [categorySlug, currentPage]);
 
   const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= (pagination?.last_page || 1)) {
@@ -61,9 +67,27 @@ const ProductList = ({ gridColumns = 4, categorySlug }: ProductListProps) => {
     }
   }
 
-  const handleAddToCart = (e: React.MouseEvent, productId: string) => {
-    e.preventDefault(); 
-    e.stopPropagation();
+  const handleAddToCart = async (e: React.MouseEvent, product: any) => {
+    e.preventDefault();
+    const productId = (product.id || product._id).toString();
+    const token = localStorage.getItem('token');
+
+    // Logic for users without login
+    if (!token) {
+      alert("Please log in to add items to your cinema bag.");
+      router.push('/login');
+      return;
+    }
+
+    const result = await addToCart(productId, 1);
+    if (result.success) {
+      // Trigger global event for Header and Sidebar updates
+      window.dispatchEvent(new Event('cartUpdate'));
+      
+      // Show elegant success message
+      setShowAddedMessage(product.name);
+      setTimeout(() => setShowAddedMessage(null), 3000);
+    }
   };
 
   const toggleWishlist = (e: React.MouseEvent, productId: string) => {
@@ -81,21 +105,31 @@ const ProductList = ({ gridColumns = 4, categorySlug }: ProductListProps) => {
   }
 
   return (
-    <section className="product-list-section flex flex-col gap-12">
+    <section className="product-list-section flex flex-col gap-12 relative">
+      {/* Sleek Success Message */}
+      {showAddedMessage && (
+        <div className="fixed top-5 right-5 z-[9999] animate-in fade-in slide-in-from-top-4 duration-300">
+          <div className="bg-dark text-white px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 border border-yellow/20">
+            <IoCheckmarkCircle className="text-yellow" size={20} />
+            <span className="font-manrope text-sm font-bold uppercase tracking-widest">
+              {showAddedMessage} added to bag
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* Product Grid */}
       <div className={`grid grid-cols-2 gap-x-4 lg:gap-x-4 gap-y-10 lg:gap-y-14 ${gridConfig[gridColumns]}`}>
         {products.map((product) => {
-          // CORRECTED: Slug and ID defined within the loop for each item
           const productId = (product.id || product._id).toString();
           const slug = product.slug || product.name.toLowerCase().replace(/ /g, '-');
-          const name = product.name
-          const category = product.category_name || product.categories_names?.[0] || "Collection" 
-          const price = product.formatted_sale_price || product.formatted_price || product.price
-          const imageSrc = product.image_url || (Array.isArray(product.images_urls) && product.images_urls[0]) || product.image
+          const name = product.name;
+          const category = product.category_name || product.categories_names?.[0] || "Collection";
+          const price = product.formatted_sale_price || product.formatted_price || product.price;
+          const imageSrc = product.image_url || (Array.isArray(product.images_urls) && product.images_urls[0]) || product.image;
           const isInWishlist = wishlist.includes(productId);
 
           return (
-            /* Corrected: Link structure using slug for SEO-friendly URLs */
             <Link href={`/product/${slug}`} key={productId}>
               <div className="product-card group cursor-pointer flex flex-col h-full relative rounded-none">
                 
@@ -140,7 +174,10 @@ const ProductList = ({ gridColumns = 4, categorySlug }: ProductListProps) => {
                   </div>
 
                   <div className="mt-4 flex flex-col sm:flex-row gap-2">
-                    <button onClick={(e) => handleAddToCart(e, productId)} className="flex-1 py-2.5 bg-gray-100 text-dark text-[10px] md:text-[11px] font-bold rounded-none flex items-center justify-center gap-2 hover:bg-gray-200 transition-colors uppercase tracking-tight">
+                    <button 
+                      onClick={(e) => handleAddToCart(e, product)} 
+                      className="flex-1 py-2.5 bg-gray-100 text-dark text-[10px] md:text-[11px] font-bold rounded-none flex items-center justify-center gap-2 hover:bg-gray-200 transition-colors uppercase tracking-tight"
+                    >
                       <LiaShoppingBagSolid size={16}/> Add to Cart
                     </button>
                     <button className="flex-1 py-2.5 bg-yellow text-dark text-[10px] md:text-[11px] font-bold rounded-none flex items-center justify-center gap-2 hover:bg-yellow/80 transition-colors uppercase tracking-tight">
@@ -154,7 +191,7 @@ const ProductList = ({ gridColumns = 4, categorySlug }: ProductListProps) => {
         })}
       </div>
 
-      {/* Redesigned Pagination: Box Type */}
+      {/* Pagination logic remains the same */}
       {pagination && pagination.last_page > 1 && (
         <div className="flex items-center justify-center gap-2 py-10 border-t border-gray-100 mt-10">
           <button 

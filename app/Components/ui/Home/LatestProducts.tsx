@@ -20,19 +20,22 @@ const LatestProducts = () => {
   
   const viewportRef = useRef<HTMLDivElement | null>(null)
 
-  useEffect(() => {
-    let mounted = true
-    const load = async () => {
-      try {
-        const data = await fetchProducts()
-        if (mounted && Array.isArray(data)) setProducts(data)
-      } catch (error) {
-        console.error("Failed to fetch products:", error)
+
+useEffect(() => {
+  let mounted = true;
+  const load = async () => {
+    try {
+      const result = await fetchProducts(); 
+      if (mounted && result && Array.isArray(result.products)) {
+        setProducts(result.products);
       }
+    } catch (error) {
+      console.error("Failed to fetch products:", error);
     }
-    load()
-    return () => { mounted = false }
-  }, [])
+  };
+  load();
+  return () => { mounted = false; };
+}, []);
 
   const updateLayout = useCallback(() => {
     if (viewportRef.current) {
