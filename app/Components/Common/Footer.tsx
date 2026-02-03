@@ -70,7 +70,7 @@ const Footer = () => {
           <div className="flex flex-col items-start">
             <h4 className="mb-6 text-white text-lg font-medium" style={{fontFamily: 'manrope'}}>Company</h4>
             <ul className="space-y-3">
-              <li><a href="#" className="text-gray-400 hover:text-yellow-400 transition-colors text-sm font-normal" style={{fontFamily: 'manrope'}}>About Us</a></li>
+              <li><a href="/our-stories" className="text-gray-400 hover:text-yellow-400 transition-colors text-sm font-normal" style={{fontFamily: 'manrope'}}>About Us</a></li>
               <li><a href="#" className="text-gray-400 hover:text-yellow-400 transition-colors text-sm font-normal" style={{fontFamily: 'manrope'}}>How It's Made</a></li>
               <li><a href="#" className="text-gray-400 hover:text-yellow-400 transition-colors text-sm font-normal" style={{fontFamily: 'manrope'}}>Our Artists</a></li>
               <li><a href="#" className="text-gray-400 hover:text-yellow-400 transition-colors text-sm font-normal" style={{fontFamily: 'manrope'}}>Blog / Stories</a></li>
