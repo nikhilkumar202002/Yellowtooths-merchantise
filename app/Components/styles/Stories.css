@@ -14,19 +14,50 @@
     color: var(--color-dark);
     padding-bottom: 15px;
 }
-.stories-banner-highlight{
+.stories-banner-highlight {
     font-family: var(--font-moralana);
     font-weight: 500;
+    position: relative;
+    display: inline-block;
+    padding: 0 5px;
+    z-index: 1;
 }
-.stories-banner-content h3{
+.curved-underline-svg {
+    position: absolute;
+    left: 0;
+    bottom: -4px; /* Adjust this to move the curve up/down */
+    width: 100%;
+    height: 25px; /* Height of the bend */
+    z-index: -1; /* Behind the text */
+    pointer-events: none;
+}
+.curved-underline-svg path {
+    fill: none;
+    stroke: var(--color-yellow);
+    stroke-width: 4; /* Thickness of the line */
+    stroke-linecap: round;
+    /* Drawing Animation */
+    stroke-dasharray: 500;
+    stroke-dashoffset: 500;
+    animation: drawCurve 1.5s ease-out forwards;
+    animation-delay: 0.3s;
+}
+@keyframes drawCurve {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+.stories-banner-content h3 {
     font-size: 45px;
     font-family: var(--font-manrope);
     font-weight: 500;
-    width: 45%;
-    line-height: 55px;
+    width: 55%; /* Increased width for text flow */
+    line-height: 49px;
     text-transform: capitalize;
     padding-bottom: 30px;
+    margin: 0 auto;
 }
+
 .explore-button{
     font-size: 17px;
     font-weight: 600;
@@ -44,4 +75,194 @@
 }
 .explore-button span{
     font-size: 20px;
+}
+
+.stories-about-content{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 100px 0px;
+}
+.stories-about-content h2{
+    font-size: 45px;
+    font-family: var(--font-moralana);
+    color: var(--color-dark);
+}
+.stories-about-content p {
+    font-size: 28px; /* Increased size for better visual effect */
+    font-family: var(--font-manrope);
+    line-height: 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+    text-align: center;
+    font-weight: 500;
+}
+.scroll-letter {
+    color: #e0e0e0; /* The "dim" color */
+    transition: color 0.1s linear;
+}
+
+
+.philosophy-item-image{
+    position: relative;
+    width: 100%;
+    height: 70vh;
+}
+.philosophy-item-image img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    overflow: hidden;
+}
+.philosophy-item-content{
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+}
+.philosophy-item-content h3{
+    font-size: 15px;
+    font-family: var(--font-manrope);
+    color: var(--color-dark);
+    background-color: var(--color-yellow);
+    display: inline-block;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+.philosophy-item-content p{
+    font-size: 16px;
+    font-family: var(--font-manrope);
+    font-weight: 500;
+    color: white;
+    line-height: 24px;
+    margin-top: 10px;
+}
+.product-philosophy-content h2{
+    font-size: 45px;
+    font-family: var(--font-moralana);
+    color: var(--color-dark);
+    margin-bottom: 30px;
+}
+.product-philosophy{
+    padding: 100px 0px;
+}
+
+
+/* Banner Section */
+.stories-banner-content h2 {
+    font-size: 16px;
+    font-family: var(--font-manrope);
+    font-weight: 600;
+    color: var(--color-dark);
+    padding-bottom: 10px;
+}
+
+.stories-banner-content h3 {
+    font-size: 28px; /* Mobile size */
+    font-family: var(--font-manrope);
+    font-weight: 500;
+    width: 100%;
+    line-height: 1.3;
+    text-transform: capitalize;
+    /* padding-bottom: 25px; */
+    margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+    .stories-banner-content h2 { font-size: 22px; }
+    .stories-banner-content h3 { 
+        font-size: 45px; 
+        width: 70%; 
+        line-height: 55px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .stories-banner-content h3 { width: 55%; }
+}
+
+/* Underline SVG */
+.curved-underline-svg {
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 100%;
+    height: 15px;
+    z-index: -1;
+}
+
+@media (min-width: 768px) {
+    .curved-underline-svg { height: 25px; bottom: -4px; }
+}
+
+/* About Section */
+.stories-about-content h2 {
+    font-size: 28px;
+    font-family: var(--font-moralana);
+    color: var(--color-dark);
+    margin-bottom: 20px;
+}
+
+.stories-about-content p {
+    font-size: 18px; /* Mobile size */
+    font-family: var(--font-manrope);
+    line-height: 1.5;
+    max-width: 100%;
+    font-weight: 500;
+}
+
+@media (min-width: 768px) {
+    .stories-about-content h2 { font-size: 45px; }
+    .stories-about-content p { 
+        font-size: 28px; 
+        max-width: 1100px;
+        line-height: 40px;
+    }
+}
+
+/* Product Philosophy Grid */
+.product-philosophy-content h2 {
+    font-size: 32px;
+    font-family: var(--font-moralana);
+    color: var(--color-dark);
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.philosophy-item-image {
+    position: relative;
+    width: 100%;
+    height: 50vh; /* Shorter for mobile */
+}
+
+@media (min-width: 768px) {
+    .product-philosophy-content h2 { font-size: 45px; }
+    .philosophy-item-image { height: 70vh; }
+}
+
+.philosophy-item-content {
+    position: absolute;
+    bottom: 15px;
+    left: 15px;
+    right: 15px;
+}
+
+.philosophy-item-content h3 {
+    font-size: 13px;
+    background-color: var(--color-yellow);
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.philosophy-item-content p {
+    font-size: 14px;
+    color: white;
+    line-height: 1.4;
+    margin-top: 8px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5); /* Helps readability over images */
 }
